@@ -468,7 +468,7 @@ class MUTAGClassifier(pl.LightningModule):
         
         training_accuracy, validation_accuracy, testing_accuracy, total_accuracy = model.visualize_classification(data_module, model_initialization_args['graph_id_to_graph_label'])
         
-        output_json_file_location = os.path.join(checkpoint_dir, 'result_summary.json')
+        output_json_file_location = os.path.join(checkpoint_dir, RESULT_SUMMARY_JSON_FILE_BASENAME)
         with open(output_json_file_location, 'w') as file_handle:
             json_dict = {
                 'testing_loss': test_results['testing_loss'],

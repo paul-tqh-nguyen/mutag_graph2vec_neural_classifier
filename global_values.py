@@ -16,6 +16,7 @@ Sections:
 import os
 import sys
 import logging
+import torch
 import numpy as np
 import matplotlib.cm
 from contextlib import contextmanager
@@ -79,6 +80,8 @@ RESULT_SUMMARY_JSON_FILE_BASENAME = 'result_summary.json'
 MUTAG_CLASSIFIER_CHECKPOINT_DIR = './checkpoints_mutag_classifier'
 MUTAG_CLASSIFIER_STUDY_NAME = 'classifier-mutag'
 MUTAG_CLASSIFIER_DB_URL = 'sqlite:///classifier-mutag.db'
+
+HYPERPARAMETER_ANALYSIS_JSON_FILE_LOCATION = './docs/hyperparameter_search_results.json'
 
 NUMBER_OF_MUTAG_CLASSIFIER_HYPERPARAMETER_TRIALS = 10_000
 GPU_IDS = [0, 1, 2, 3]
