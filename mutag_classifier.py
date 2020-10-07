@@ -14,14 +14,12 @@ Sections:
 ###########
 
 import karateclub
-import random
 import json
 import numpy as np
 import networkx as nx
 import pickle
 from sklearn.model_selection import train_test_split
 import pytorch_lightning as pl
-import optuna
 import torch
 from torch import nn
 from torch.utils import data
@@ -38,7 +36,7 @@ from misc_utilities import *
 # Globals #
 ###########
 
-BCE_LOSS = torch.nn.BCELoss(reduction='none')
+BCE_LOSS = nn.BCELoss(reduction='none')
 
 #####################
 # Graph Data Module #
