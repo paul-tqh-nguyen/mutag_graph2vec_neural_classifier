@@ -1,6 +1,6 @@
 # MUTAG graph2vec Neural Classifier
 
-This is a comparison of an anime recommender system using matrix factorization against a neural recommender system.
+This is a neural network that classifies chemical compounds according to their mutagenic effect on bacteria.
 
 We're using the MUTAG dataset. The data can be found [here](https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets).
 
