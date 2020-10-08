@@ -1,1 +1,70 @@
-stub
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MUTAG Classification</title>
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <script src="https://d3js.org/d3.v5.js"></script>
+  </head>
+  <body>
+    <header class="stone-background">
+      <div class="vertical-padding">
+	<h1 style="">Chemical Compound Classification</h1>
+	<p>Neural classification of chemical compounds according to their mutagenic effect on bacteria using graph2vec.</p>
+      </div>
+    </header>
+    <section id="introduction">
+      <div class="horizontal-padding vertical-padding">
+	<h3>Introduction</h3>
+	<p>A colleague from one of my reading groups asked, "Since an LSTM has memory, can't it simply remember which word vectors are important and encode important parts of vectors worth paying attention to in its hidden state? It doesn't seem practical for us to be learning about attention mechanisms if an LSTM could simply learn the correct function to weed out unimportant information. We'd be wasting time learning a technique that doesn't add anything."</p>
+      </div>
+    </section>
+    <section id="experiment-overview" class="stone-background">
+      <div class="horizontal-padding vertical-padding">
+	<h3>Experiment Overview</h3>
+	<p>We're going to compare the performance of two types of deep learning architectures, a vanilla LSTM architecture and an LSTM architecture with attention, on the <a target="_blank" href="http://ai.stanford.edu/~amaas/data/sentiment/">IMDB dataset</a> for binary sentiment prediction.</p>
+	<p>We'll be using binary cross entropy loss and the Adam optimizer.</p>
+      </div>
+    </section>
+    <section id="experiment-results">
+      <div class="horizontal-padding vertical-padding">
+	<h3>Experiment Results</h3>
+	<p>Below, we'll compare the vanilla LSTM architecture to the LSTM with attention architecture w.r.t. loss minimization, loss minimization per parameter, and training time until convergence.</p>
+	<p>There were 468 possible hyperparameter combinations for the vanilla LSTM architecture.</p>
+      </div>
+    </section>
+    <section id="conclusion" class="stone-background">
+      <div class="horizontal-padding vertical-padding">
+	<h3>Conclusion</h3>
+	<p>We've shown that attention mechanisms, though seemingly redundant, can yield better results in practice.</p>
+	<p>Hopefully, the work here does not solely convey on the benefits of attention but also conveys the importance of practical experience. Learning through experimentation and practice yield far superior results to textbook study alone.</p>
+      </div>
+      <table style="table-layout: fixed; width: 100%; padding-top: 40px; padding-bottom: 40px;">
+	<tr>
+	  <td style="width:10%;"></td>
+	  <td style="width:30%;">
+      	    <card class="stone-background">
+      	      <a target="_blank" href="https://github.com/paul-tqh-nguyen">
+      		<div class="card-text">
+      		  <p>Interested in my work?</p>
+      		  <p><b>See my projects on GitHub.</b></p>
+      		</div>
+      	      </a>
+      	    </card>
+	  </td>
+	  <td style="width:20%;"></td>
+	  <td style="width:30%;">
+      	    <card class="stone-background">
+      	      <a target="_blank" href="https://paul-tqh-nguyen.github.io/about/">
+      		<div class="card-text">
+      		  <p>Want to learn more about me?</p>
+      		  <p><b>Visit my website.</b></p>
+      		</div>
+      	      </a>
+      	    </card>
+	  </td>
+	  <td style="width:10%;"></td>
+	</tr>
+      </table>
+    </section>
+  </body>
+</html>
