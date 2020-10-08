@@ -19,12 +19,13 @@ The following tools were utilized:
 
 - [Optuna](https://optuna.org/)
 - [TensorBoard](https://www.tensorflow.org/tensorboard)
+- [scikit-learn](https://scikit-learn.org/stable/)
+- [karateclub](https://karateclub.readthedocs.io/en/latest/)
 - [PyTorch Lightning](https://pytorch-lightning.readthedocs.io/en/latest/)
 - [PyTorch](https://pytorch.org/)
 - [Joblib](https://joblib.readthedocs.io/en/latest/)
 - [Pandas](https://pandas.pydata.org/)
-- [Pandarallel](https://github.com/nalepae/pandarallel)
 - [Matplotllib](https://matplotlib.org/)
 - [NumPy](https://numpy.org/)
 
-Other Python libraries used include [contextlib](https://docs.python.org/3/library/contextlib.html), [typing-extensions](https://pypi.org/project/typing-extensions/), [abc](https://docs.python.org/3/library/abc.html), [more-itertools](https://more-itertools.readthedocs.io/en/stable/), [multiprocessing](https://docs.python.org/3/library/multiprocessing.html), [typing](https://docs.python.org/3/library/typing.html), [collections](https://docs.python.org/3/library/collections.html), [argparse](https://docs.python.org/3/library/argparse.html), [json](https://docs.python.org/3/library/json.html), [os](https://docs.python.org/3/library/os.html), and [logging](https://docs.python.org/3/library/logging.html).
+Other Python libraries used include [contextlib](https://docs.python.org/3/library/contextlib.html), [pickle](https://docs.python.org/3/library/pickle.html), [typing-extensions](https://pypi.org/project/typing-extensions/), [more-itertools](https://more-itertools.readthedocs.io/en/stable/), [multiprocessing](https://docs.python.org/3/library/multiprocessing.html), [typing](https://docs.python.org/3/library/typing.html), [collections](https://docs.python.org/3/library/collections.html), [argparse](https://docs.python.org/3/library/argparse.html), [json](https://docs.python.org/3/library/json.html), [os](https://docs.python.org/3/library/os.html), [sys](https://docs.python.org/3/library/sys.html), and [logging](https://docs.python.org/3/library/logging.html).
