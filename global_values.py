@@ -1,13 +1,16 @@
 
 '''
 
+This file contains global variables, global initializations, and some helper functions and data structures used across many modules.
+
 Sections:
 * Imports
+* Logging
 * Globals
+* Visualize 2D PCA
+* Vector Dict
 
 '''
-
-# @todo update docstring
 
 ###########
 # Imports #
@@ -24,8 +27,6 @@ from sklearn.decomposition import PCA
 from typing import Union, Iterable, Generator
 
 from misc_utilities import *
-
-# @todo make sure these imports are used
 
 ###########
 # Logging #
@@ -63,8 +64,6 @@ def training_logging_suppressed() -> Generator:
         logger.setLevel(original_level)
     return
 
-# @todo make sure everything in this file is used
-
 ###########
 # Globals #
 ###########
@@ -72,7 +71,7 @@ def training_logging_suppressed() -> Generator:
 RANDOM_SEED = 1234
 
 EMBEDDING_VISUALIZATION_FILE_BASENAME = 'embedding_visualization.png'
-CLASSIFICATION_CORRECTNSES_VISUALIZATION_FILE_BASENAME = 'classification_visualization.png'
+CLASSIFICATION_CORRECTNESS_VISUALIZATION_FILE_BASENAME = 'classification_visualization.png'
 KEYED_EMBEDDING_PICKLE_FILE_BASENAME = 'doc2vec_keyed_embedding.pickle'
 DOC2VEC_MODEL_FILE_BASENAME = 'doc2vec.model'
 RESULT_SUMMARY_JSON_FILE_BASENAME = 'result_summary.json'

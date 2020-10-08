@@ -1,13 +1,15 @@
 
 '''
 
+This module contains our MUTAG classifier
+
 Sections:
 * Imports
 * Globals
+* Graph Data Module
+* MUTAG Classifier Model
 
 '''
-
-# @todo update docstring
 
 ###########
 # Imports #
@@ -29,8 +31,6 @@ from typing_extensions import Literal
 
 from global_values import *
 from misc_utilities import *
-
-# @todo make sure these imports are used
 
 ###########
 # Globals #
@@ -196,7 +196,7 @@ class MUTAGClassifier(pl.LightningModule):
         
         return graph_id_to_graph_embeddings
 
-    def forward(self, batch: torch.Tensor) -> torch.Tensor: # @todo sweep all return signatures
+    def forward(self, batch: torch.Tensor) -> torch.Tensor:
         batch_size = batch.shape[0]
         assert tuple(batch.shape) == (batch_size, self.hparams.embedding_size)
 
@@ -210,11 +210,10 @@ class MUTAGClassifier(pl.LightningModule):
     
     def backward(self, _trainer: pl.Trainer, loss: torch.Tensor, _optimizer: torch.optim.Optimizer, _optimizer_idx: int) -> None:
         del _trainer, _optimizer, _optimizer_idx
-        loss.backward() # @todo do we need this mean call here?
+        loss.backward()
         return
 
-    def configure_optimizers(self) -> Tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LambdaLR]:
-        # @todo use Nadam and explore its parameters in the hyperparameter search
+    def configure_optimizers(self) -> Dict[str, torch.optim.Optimizer]:
         optimizer: torch.optim.Optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.classifier_learning_rate)
         return {'optimizer': optimizer}
 
@@ -240,7 +239,7 @@ class MUTAGClassifier(pl.LightningModule):
         return result
 
     def training_step_end(self, training_step_result: pl.TrainResult) -> pl.TrainResult:
-        assert len(training_step_result.minimize.shape) == 1
+        assert tuple(training_step_result.minimize.shape) == (self.hparams.batch_size,), f'Training loss has shape {only_one(training_step_result.minimize.shape)} (expected {self.hparams.batch_size}).'
         mean_loss = training_step_result.minimize.mean()
         result = pl.TrainResult(minimize=mean_loss)
         result.log('training_loss', mean_loss, prog_bar=True)
@@ -248,7 +247,7 @@ class MUTAGClassifier(pl.LightningModule):
     
     def _eval_step(self, batch_dict: dict) -> pl.EvalResult:
         loss = self._get_batch_loss(batch_dict)
-        assert len(loss.shape) == 1 # batch_size
+        assert len(loss.shape) == 1 
         result = pl.EvalResult()
         result.log('loss', loss)
         return result
@@ -353,7 +352,7 @@ class MUTAGClassifier(pl.LightningModule):
         checkpoint_dir = self.__class__.checkpoint_directory_from_hyperparameters(**hyperparameter_dict)
         if not os.path.isdir(checkpoint_dir):
             os.makedirs(checkpoint_dir)
-        output_file_location = os.path.join(checkpoint_dir, CLASSIFICATION_CORRECTNSES_VISUALIZATION_FILE_BASENAME)
+        output_file_location = os.path.join(checkpoint_dir, CLASSIFICATION_CORRECTNESS_VISUALIZATION_FILE_BASENAME)
 
         training_graph_ids = [int(example['graph_id'].item()) for example in data_module.train_dataloader().dataset]
         validation_graph_ids = [int(example['graph_id'].item()) for example in data_module.val_dataloader().dataset]

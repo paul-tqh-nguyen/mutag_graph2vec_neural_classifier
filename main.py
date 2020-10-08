@@ -1,13 +1,18 @@
 
 '''
 
+This file contains functionality for hyperparameter search over our MUTAG classifier's hyperparameter search space.
+
 Sections:
 * Imports
 * Globals
+* Data Processing
+* MUTAG Classifier Hyperparameter Search
+* Default Model
+* Hyperparameter Search Result Analysis
+* Driver
 
 '''
-
-# @todo update docstring
 
 ###########
 # Imports #
@@ -19,7 +24,6 @@ import more_itertools
 import joblib
 import optuna
 import pandas as pd
-import numpy as np
 import multiprocessing as mp
 import networkx as nx
 from typing import Dict, Tuple
@@ -27,8 +31,6 @@ from typing import Dict, Tuple
 from misc_utilities import *
 from global_values import *
 from mutag_classifier import MUTAGClassifier
-
-# @todo make sure these imports are used
 
 ###########
 # Globals #
@@ -41,8 +43,6 @@ EDGE_LABELS_FILE = './data/MUTAG_edge_labels.txt'
 NODE_LABELS_FILE = './data/MUTAG_node_labels.txt'
 GRAPH_IDS_FILE = './data/MUTAG_graph_indicator.txt'
 GRAPH_LABELS_FILE = './data/MUTAG_graph_labels.txt'
-
-# @todo make sure all these globals are used
     
 ###################
 # Data Processing #
@@ -81,9 +81,9 @@ def process_data() -> Tuple[dict, dict]:
     assert set(graph_id_to_graph.keys()) == set(graph_id_to_graph_label.keys())
     return graph_id_to_graph, graph_id_to_graph_label
 
-####################
-# MUTAG Classifier #
-####################
+##########################################
+# MUTAG Classifier Hyperparameter Search #
+##########################################
 
 class MUTAGClassifierHyperParameterSearchObjective:
     def __init__(self, graph_id_to_graph: Dict[int, nx.Graph], graph_id_to_graph_label: Dict[int, int], gpu_id_queue: object):
@@ -204,6 +204,7 @@ def analyze_hyperparameter_search_results() -> None:
         result_summary_dicts.append(result_summary_dict)
     with open(HYPERPARAMETER_ANALYSIS_JSON_FILE_LOCATION, 'w') as f:
         json.dump(result_summary_dicts, f, indent=4)
+    LOGGER.info(f'Results saved to {HYPERPARAMETER_ANALYSIS_JSON_FILE_LOCATION} .')
     return
 
 ##########
