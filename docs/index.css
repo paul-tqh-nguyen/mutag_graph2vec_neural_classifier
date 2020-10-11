@@ -155,9 +155,9 @@ li {
 #word-embedding-choice-table tr {
 }
 
-/******************************/
-/* RNN Architecture Depiction */
-/******************************/
+/**************************/
+/* Architecture Depiction */
+/**************************/
 
 .svg-container-center {
     position: relative;
@@ -195,6 +195,32 @@ div.architecture-depiction-container {
     stroke-opacity: 1.0;
 }
 
+.graph-group-background {
+    rx: 10;
+    stroke-width: 1.5;
+    stroke: #000;
+    fill: #fff;
+}
+
+.graph-edge-group {
+}
+
+.graph-edge {
+    stroke: black;
+    stroke-width: 1px;
+    stroke-opacity: 0.25;
+}
+
+.graph-node-group {
+}
+
+.graph-node {
+    r: 6;
+    fill: #DC9AF6;
+    stroke: black;
+    stroke-width: 2px;
+}
+
 .text-with-bbox-group {
 }
 
@@ -209,53 +235,24 @@ div.architecture-depiction-container {
     fill: #fff;
 }
 
-.word-group .text-with-bbox-group-bounding-box {
-    rx: 0;
-    stroke-width: 1px;
-}
-
-.word-group .text-with-bbox-group-text {
-    fill: #555;
-    font-style: italic;
-}
-
-.embedding-group .text-with-bbox-group-bounding-box {
+.graph2vec-group .text-with-bbox-group-bounding-box {
     fill: #fff8c4;
 }
 
-.lstm-group .text-with-bbox-group-bounding-box {
-    fill: #c4dbff;
-}
-
-.attention-group .text-with-bbox-group-bounding-box {
+.dense-group .text-with-bbox-group-bounding-box {
     fill: #c4ffd0;
 }
 
-.softmax-group .text-with-bbox-group-bounding-box, .attention-softmax-group .text-with-bbox-group-bounding-box {
+.fully-connected-group .text-with-bbox-group-bounding-box {
     fill: #ffc4c4;
 }
 
-.mean-group .text-with-bbox-group-bounding-box, .attention-sum-group .text-with-bbox-group-bounding-box {
-    fill: #e4c4ff;
-}
-
-.fully-connected-group .text-with-bbox-group-bounding-box,
-.prediction-group .text-with-bbox-group-bounding-box {
-    fill: #c4fdff;
-}
-
 .sigmoid-group .text-with-bbox-group-bounding-box {
-    fill: #ffdec4;
+    fill: #d8c4ff;
 }
 
-.output-group .text-with-bbox-group-bounding-box {
-    rx: 0;
-    stroke-width: 1px;
-    fill: #fff;
-}
-
-.output-group .text-with-bbox-group-text {
-    fill: #555;
+.round-group .text-with-bbox-group-bounding-box {
+    fill: #ffe2c4;
 }
 
 /***************************/
