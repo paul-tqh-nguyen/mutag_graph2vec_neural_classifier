@@ -25,15 +25,30 @@
       <div class="horizontal-padding vertical-padding">
 	<h3>Experiment Overview</h3>
 	<p>The MUTAG dataset contains 188 chemical compounds that are labelled according to their mutagenic effect on a bacterium. </p>
-	<p>The <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a> split the data to use 90% for training and 10$ for testing. We similarly used 10% for testing, 10% for validation, and 80% for training.</p>
+	<p>The <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a> split the data to use 90% for training and 10% for testing. We similarly used 10% for testing, 10% for validation, and 80% for training.</p>
 	<p>Here's a depiction of our model.</p>
 	<div class="architecture-depiction-container svg-container-center">
 	  <svg id="neural-classifier-depiction"></svg>
 	</div>
-	<p></p>
-	<p></p>
-	<p></p>
-	<p></p>
+	<p>Dropout was applied after every dense layer.</p>
+	<p>The rounded result (either zero or one) was used to determine our final result. This means we used a threshold of 0.5. We did not optimizer this threshold. </p>
+	<p>We used binary cross entropy as our loss function and the Adam optimizer. Rounding to get the final result did not happen during training (we simply used the result from the sigmoid).</p>
+	<p>The hyperparameters for our model were:</p>
+	<ul>
+	  <li>graph2vec Rooted Subgraph Size</li>
+	  <li>graph2vec Embedding Size</li>
+	  <li>Number of graph2vec Training Epochs</li>
+	  <li>graph2vec Learning Rate (used solely for graph2vec training)</li>
+	  <li>Batch Size</li>
+	  <li>Neural Learning Rate (used to train all parameters outside of graph2vec)</li>
+	  <li>Number of Dense Layers</li>
+	  <li>Gradient Clipping Threshold</li>
+	  <li>Dropout Probability</li>
+	</ul>
+	<p>We first trained our graph2vec embeddings and then trained the model itself independently (with the embedding vectors frozen).</p>
+	<p>We used early stopping when training the neural classifier, but a fixed number of epochs for training our graph2vec embeddings.</p>
+	<p>Included in the dense layer count selection was the option to use zero dense layers, which turns our model into a logistic regression model.</p>
+	<p>We tuned our hyperparameters using two methods, via <a target="_blank" href="https://en.wikipedia.org/wiki/Hyperparameter_optimization#Random_search">random search</a> and via a <a target="_blank" href="http://proceedings.mlr.press/v28/bergstra13.pdf">tree-structured Parzen estimator</a> with <a target="_blank" href="https://arxiv.org/abs/1502.07943">successive halving</a>.</p>
 	<p></p>
       </div>
     </section>

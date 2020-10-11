@@ -279,7 +279,7 @@
     };
     
     const appendRandomConnectedGraph = (containingGroup) => {
-        const [originalNodeData, originalLinkData] = generateErdosRenyiGraphData(40, 0.005);
+        const [originalNodeData, originalLinkData] = generateErdosRenyiGraphData(40, 0.01);
         const nodeIdToNeighborNodeIds = originalLinkData.reduce((accumulator, link) => {
             if (!accumulator.hasOwnProperty(link.source)) {
                 accumulator[link.source] = [];
