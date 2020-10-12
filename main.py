@@ -204,7 +204,16 @@ def analyze_hyperparameter_search_results() -> None:
         result_summary_dicts.append(result_summary_dict)
     with open(HYPERPARAMETER_ANALYSIS_JSON_FILE_LOCATION, 'w') as f:
         json.dump(result_summary_dicts, f, indent=4)
-    LOGGER.info(f'Results saved to {HYPERPARAMETER_ANALYSIS_JSON_FILE_LOCATION} .')
+    LOGGER.info(f'Hyperparameter result summary saved to {HYPERPARAMETER_ANALYSIS_JSON_FILE_LOCATION} .')
+    all_graph_data = {}
+    graph_id_to_graph, graph_id_to_graph_label = process_data()
+    for graph_id, graph in graph_id_to_graph.items():
+        graph_label = graph_id_to_graph_label[graph_id]
+        graph_data = nx.readwrite.json_graph.node_link_data(graph, {'source': 'source', 'target': 'target'})
+        all_graph_data[graph_id] = {'graph': graph_data, 'graph_label': graph_label}
+    with open(MUTAG_DATA_SUMMARY_JSON_FILE_LOCATION, 'w') as f:
+        json.dump(all_graph_data, f, indent=4)
+    LOGGER.info(f'MUTAG summary saved to {MUTAG_DATA_SUMMARY_JSON_FILE_LOCATION} .')
     return
 
 ##########
