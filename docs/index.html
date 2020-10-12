@@ -16,9 +16,9 @@
       <div class="horizontal-padding vertical-padding">
 	<h3>Introduction</h3>
 	<p>This article goes over our findings for classifying chemical compounds based on their mutagenic affect on a particular bacterium.</p>
-	<p>This effort was motivated by a desire to verify the validity of the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a>. Rather than directly reproducing the results by using an SVM classifier, we chose to use a deep feedforward neural network.</p>
+	<p>This effort was motivated by a desire to verify the validity of the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a>. Rather than directly reproducing the results by using an SVM classifier, we chose to use a feedforward neural network.</p>
 	<p>We use the MUTAG dataset. It can be found <a target="_blank" href="https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets">here</a>.</p>
-	<p>We were able to achieve similar and sometimes better results and give an explanation of this in our <a href="#experiment-results">result summary</a> found later in this article.</p>
+	<p>We were able to achieve similar results and give an explanation of this in our <a href="#experiment-results">result summary</a> found later in this article.</p>
       </div>
     </section>
     <section id="experiment-overview" class="stone-background">
@@ -27,18 +27,18 @@
 	<p>The MUTAG dataset contains 188 chemical compounds that are labelled according to their mutagenic effect on a bacterium. </p>
 	<p>The <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a> split the data to use 90% for training and 10% for testing. We similarly used 10% for testing, 10% for validation, and 80% for training.</p>
 	<p>Here's a depiction of our model.</p>
-	<div class="architecture-depiction-container svg-container-center">
+	<div class="architecture-depiction-container container-center">
 	  <svg id="neural-classifier-depiction"></svg>
 	</div>
 	<p>Dropout was applied after every dense layer.</p>
-	<p>The rounded result (either zero or one) was used to determine our final result. This means we used a threshold of 0.5. We did not optimizer this threshold. </p>
+	<p>The rounded result (either zero or one) was used to determine our final result. This means we used a threshold of 0.5. We did not optimize this threshold. </p>
 	<p>We used binary cross entropy as our loss function and the Adam optimizer. Rounding to get the final result did not happen during training (we simply used the result from the sigmoid).</p>
 	<p>The hyperparameters for our model were:</p>
 	<ul>
-	  <li>graph2vec Rooted Subgraph Size</li>
-	  <li>graph2vec Embedding Size</li>
+	  <li>Weisfeiler-Lehman Iteration Count / Rooted Subgraph Size for graph2vec</li>
+	  <li>Embedding Size for graph2vec </li>
 	  <li>Number of graph2vec Training Epochs</li>
-	  <li>graph2vec Learning Rate (used solely for graph2vec training)</li>
+	  <li>Learning Rate for graph2vec (used solely for graph2vec training)</li>
 	  <li>Batch Size</li>
 	  <li>Neural Learning Rate (used to train all parameters outside of graph2vec)</li>
 	  <li>Number of Dense Layers</li>
@@ -46,24 +46,27 @@
 	  <li>Dropout Probability</li>
 	</ul>
 	<p>We first trained our graph2vec embeddings and then trained the model itself independently (with the embedding vectors frozen).</p>
-	<p>We used early stopping when training the neural classifier, but a fixed number of epochs for training our graph2vec embeddings.</p>
+	<p>We used early stopping when training the neural classifier but a fixed number of epochs for training our graph2vec embeddings.</p>
 	<p>Included in the dense layer count selection was the option to use zero dense layers, which turns our model into a logistic regression model.</p>
 	<p>We tuned our hyperparameters using two methods, via <a target="_blank" href="https://en.wikipedia.org/wiki/Hyperparameter_optimization#Random_search">random search</a> and via a <a target="_blank" href="http://proceedings.mlr.press/v28/bergstra13.pdf">tree-structured Parzen estimator</a> with <a target="_blank" href="https://arxiv.org/abs/1502.07943">successive halving</a>.</p>
-	<p></p>
       </div>
     </section>
     <section id="experiment-results">
       <div class="horizontal-padding vertical-padding">
 	<h3>Experiment Results</h3>
-	<p>Below, we'll compare the vanilla LSTM architecture to the LSTM with attention architecture w.r.t. loss minimization, loss minimization per parameter, and training time until convergence.</p>
-	<p>There were 468 possible hyperparameter combinations for the vanilla LSTM architecture.</p>
+	<p>We're using the same percent of the dataset for testing as done in the <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a>. Whether or not this small test set size was problematic (e.g. might lead to overfitting, especially given the small size of the dataset as a whole) was not <em>intetionally</em> explored as our goal was to merely produce similar results to the paper.</p>
+	<p>We ran <span id="total-number-of-hyperparameter-search-trials-span"></span> trials of hyperparameter search.</p>
+	<p>Here are our best overall results by validation accuracy:</p>
+	<div id="all-results-by-validation" class="result-table-container"></div>
+	<p>Note that some of the models above have zero dense layers, i.e. they are logistic regression models.</p>
+	<p>The <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a> reported 83.15% accuracy (with a standard deviation of 9.25%) on the MUTAG dataset. Given that we were able to achieve 89.47% test accuracy, it seems that the results from the graph2vec paper on the MUTAG dataset are reproducible with feed-forward neural network and logistic regression classifiers in addition to the SVM classifier used in the paper.</p>
+	<p>However, one flaw in our experiment was that our validation set was the same small size as the test set. We had <span id="total-number-of-models-with-max-validation-accuracy"></span> models achieve a validation accuracy of <span id="max-validation-accuracy-percent-span"></span>. However, some of them had testing scores as low as <span id="worst-testing-accuracy-with-max-validation-accuracy-percent-span"></span>. Thus, the validation accuracy wasn't a great indicator of whether or not the model was sufficiently accurate.</p>
       </div>
     </section>
     <section id="conclusion" class="stone-background">
       <div class="horizontal-padding vertical-padding">
 	<h3>Conclusion</h3>
-	<p>We've shown that attention mechanisms, though seemingly redundant, can yield better results in practice.</p>
-	<p>Hopefully, the work here does not solely convey on the benefits of attention but also conveys the importance of practical experience. Learning through experimentation and practice yield far superior results to textbook study alone.</p>
+	<p>dummy dummy</p>
       </div>
       <table style="table-layout: fixed; width: 100%; padding-top: 40px; padding-bottom: 40px;">
 	<tr>

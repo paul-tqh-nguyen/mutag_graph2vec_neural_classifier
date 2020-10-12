@@ -1,4 +1,4 @@
-{ // Architecture Depictions
+{
 
     /*******************/
     /* Misc. Utilities */
@@ -28,22 +28,20 @@
     
     const mean = inputArray => sum(inputArray) / inputArray.length;
     
-    const createNewElement = (childTag, {classes, attributes, innerHTML}={}) => {
-        const newElement = childTag === 'svg' ? document.createElementNS('http://www.w3.org/2000/svg', childTag) : document.createElement(childTag);
-        if (!isUndefined(classes)) {
-            classes.forEach(childClass => newElement.classList.add(childClass));
+    const numberToOrdinal = (number) => {
+        const onesDigit = number % 10;
+        const tensDigit = number % 100;
+        if (onesDigit == 1 && tensDigit != 11) {
+            return number + 'st';
+        } else if (onesDigit == 2 && tensDigit != 12) {
+            return number + 'nd';
+        } else if (onesDigit == 3 && tensDigit != 13) {
+            return number + 'rd';
+        } else {
+            return number + 'th';
         }
-        if (!isUndefined(attributes)) {
-            Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
-                newElement.setAttribute(attributeName, attributeValue);
-            });
-        }
-        if (!isUndefined(innerHTML)) {
-            newElement.innerHTML = innerHTML;
-        }
-        return newElement;
     };
-
+    
     // D3 Extensions
     d3.selection.prototype.moveToFront = function() {
 	return this.each(function() {
@@ -61,6 +59,153 @@
             }
         });
     };
+
+    /**********************/
+    /* HTML Element Utils */
+    /**********************/
+    
+    const removeAllChildNodes = (parent) => {
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+        }
+    };
+    
+    const createNewElement = (childTag, {classes, attributes, innerHTML}={}) => {
+        const newElement = childTag === 'svg' ? document.createElementNS('http://www.w3.org/2000/svg', childTag) : document.createElement(childTag);
+        if (!isUndefined(classes)) {
+            classes.forEach(childClass => newElement.classList.add(childClass));
+        }
+        if (!isUndefined(attributes)) {
+            Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
+                newElement.setAttribute(attributeName, attributeValue);
+            });
+        }
+        if (!isUndefined(innerHTML)) {
+            newElement.innerHTML = innerHTML;
+        }
+        return newElement;
+    };
+    
+    const createTableWithElements = (rows, {classes, attributes}={}) => {
+        const table = createNewElement('table', {classes, attributes});
+        rows.forEach(elements => {
+            const tr = document.createElement('tr');
+            table.append(tr);
+            elements.forEach(element => {
+                const td = document.createElement('td');
+                tr.append(td);
+                td.append(element);
+            });
+        });
+        return table;
+    };
+    
+    const createLazyAccordion = (labelGeneratorDestructorTriples) => {
+        const accordionContainer = createNewElement('div', {classes: ['accordion-container']});
+        labelGeneratorDestructorTriples.forEach(([labelInnerHTML, contentGenerator, contentDestructor], i) => {
+            // contentGenerator and contentDestructor take an HTML element
+            const labelContentPairElement = createNewElement('div');
+            const label = createNewElement('p', {classes: ['accordion-label'], innerHTML: labelInnerHTML});
+            const contentDiv = createNewElement('div', {classes: ['accordion-content']});
+            labelContentPairElement.append(label);
+            labelContentPairElement.append(contentDiv);
+            label.onclick = () => {
+                label.classList.toggle('active');
+                contentDiv.classList.toggle('active');
+                if (label.classList.contains('active')) {
+                    contentGenerator(contentDiv);
+                } else {
+                    contentDestructor(contentDiv);
+                }
+            };
+            accordionContainer.append(labelContentPairElement);
+        });
+        return accordionContainer;
+    };
+
+    /*********************/
+    /* Result Accordions */
+    /*********************/
+    
+    const numberOfResultsToShow = 20;
+    
+    d3.json('./hyperparameter_search_results.json').then(resultSummaryDicts => { // All Results
+        document.querySelector('#total-number-of-hyperparameter-search-trials-span').innerHTML = resultSummaryDicts.length.toString();
+        const maxValidationAccuracy = Math.max(...resultSummaryDicts.map(resultSummaryDict => resultSummaryDict.validation_accuracy));
+        const resultDictsWithMaxValidationAccuracy = resultSummaryDicts.filter(resultSummaryDict => resultSummaryDict.validation_accuracy ===  maxValidationAccuracy);
+        document.querySelector('#total-number-of-models-with-max-validation-accuracy').innerHTML = resultDictsWithMaxValidationAccuracy.length.toString();
+        document.querySelector('#max-validation-accuracy-percent-span').innerHTML = `${(100*maxValidationAccuracy).toFixed(2)}% (${maxValidationAccuracy*19}/19 correct)`; // @todo it would be nice to not hard-code this 19
+        const worstTestingAccuracyWithMaxValidationAccuracy = resultDictsWithMaxValidationAccuracy.reduce(
+            (accumulator, resultDict) => ((resultDict.testing_accuracy < accumulator) ? resultDict.testing_accuracy : accumulator)
+            , 2);
+        document.querySelector('#worst-testing-accuracy-with-max-validation-accuracy-percent-span').innerHTML = // @todo it would be nice to not hard-code this 19
+            `${(100*worstTestingAccuracyWithMaxValidationAccuracy).toFixed(2)}% (${worstTestingAccuracyWithMaxValidationAccuracy*19}/19 correct)`; 
+        
+        const generateLabelGeneratorDestructorTriple = (resultSummaryDict, i) => {
+            
+            const labelInnerHTML = `${numberToOrdinal(i+1)} Place Best Validation Accuracy Model`;
+            
+            const contentGenerator = contentContainer => {
+                contentContainer.append(createNewElement('p', {innerHTML: 'Results:', classes: ['result-table-title']}));
+                contentContainer.append(createTableWithElements([
+                    [
+                        createNewElement('p', {innerHTML: 'Testing Accuracy'}),
+                        createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${(100*resultSummaryDict.testing_accuracy).toFixed(2)}%, ${resultSummaryDict.testing_accuracy*19}/19`})
+                    ],
+                    [
+                        createNewElement('p', {innerHTML: 'Validation Accuracy'}),
+                        createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${(100*resultSummaryDict.validation_accuracy).toFixed(2)}%, ${resultSummaryDict.validation_accuracy*19}/19`})
+                    ],
+                    [
+                        createNewElement('p', {innerHTML: 'Training Accuracy'}),
+                        createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${(100*resultSummaryDict.training_accuracy).toFixed(2)}%, ${resultSummaryDict.training_accuracy*resultSummaryDict.training_set_batch_count*resultSummaryDict.batch_size}/${resultSummaryDict.training_set_batch_count*resultSummaryDict.batch_size}`})
+                    ],
+                    [
+                        createNewElement('p', {innerHTML: 'Total Dataset Accuracy'}),
+                        createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${(100*resultSummaryDict.total_accuracy).toFixed(2)}%, ${resultSummaryDict.total_accuracy*188}/188`})
+                    ],
+                ], {classes: ['result-table', 'container-center'], attributes: {style: 'margin-bottom: 1em;'}}));
+                
+                contentContainer.append(createNewElement('p', {innerHTML: 'graph2vec Hyperparameters:', classes: ['result-table-title']}));
+                contentContainer.append(createTableWithElements([
+                    [createNewElement('p', {innerHTML: 'Weisfeiler-Lehman Iteration Count'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${resultSummaryDict.wl_iterations}`})],
+                    [createNewElement('p', {innerHTML: 'Embedding Size'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${resultSummaryDict.embedding_size}`})],
+                    [createNewElement('p', {innerHTML: 'Number of graph2vec Training Epochs'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${resultSummaryDict.graph2vec_epochs}`})],
+                    [createNewElement('p', {innerHTML: 'graph2vec Learning Rate'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: ` ${resultSummaryDict.graph2vec_learning_rate}`})],
+                ], {classes: ['result-table', 'container-center'], attributes: {style: 'margin-bottom: 1em;'}}));
+                
+                contentContainer.append(createNewElement('p', {innerHTML: 'Neural Network Hyperparameters:', classes: ['result-table-title']}));
+                contentContainer.append(createTableWithElements([
+                    [createNewElement('p', {innerHTML: 'Batch Size'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: ` ${resultSummaryDict.batch_size}`})],
+                    [createNewElement('p', {innerHTML: 'Neural Learning Rate'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: ` ${resultSummaryDict.classifier_learning_rate}`})],
+                    [createNewElement('p', {innerHTML: 'Number of Dense Layers'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: ` ${resultSummaryDict.number_of_layers}`})],
+                    [createNewElement('p', {innerHTML: 'Gradient Clipping Threshold'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: ` ${resultSummaryDict.gradient_clip_val}`})],
+                    [createNewElement('p', {innerHTML: 'Dropout Probability'}), createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: ` ${resultSummaryDict.dropout_probability}`})],
+                ], {classes: ['result-table', 'container-center'], attributes: {style: 'margin-bottom: 1em;'}}));
+            };
+            
+            const contentDestructor = contentContainer => {
+                removeAllChildNodes(contentContainer);
+            };
+
+            return [labelInnerHTML, contentGenerator, contentDestructor];
+        };
+        
+        const validationLabelGeneratorDestructorTriples = resultSummaryDicts
+              .sort((resultSummaryDict1, resultSummaryDict2) => {
+                  let result = resultSummaryDict2.validation_accuracy-resultSummaryDict1.validation_accuracy;
+                  if (result === 0) {
+                      result = resultSummaryDict2.testing_accuracy-resultSummaryDict1.testing_accuracy;
+                  }
+                  return result;
+              })
+              .slice(0, numberOfResultsToShow)
+              .map(generateLabelGeneratorDestructorTriple);
+        const allResultsByValidationDiv = document.querySelector('#all-results-by-validation');
+        const validationAccordion = createLazyAccordion(validationLabelGeneratorDestructorTriples);
+        validationAccordion.classList.add('container-center');
+        allResultsByValidationDiv.append(validationAccordion);        
+    });
 
     /***************************/
     /* Visualization Utilities */
@@ -220,8 +365,8 @@
               .append('circle')
               .classed('graph-node', true);
         
-        const alphaDecay = 0.0025;
-        const velocityDecay = 0.9;
+        const alphaDecay = 0.0075;
+        const velocityDecay = 0.8;
         const paddingBetweenNodes = 25;
         let linkForceAlpha = 0.1;
         const drag = d3.drag();
@@ -341,8 +486,8 @@
         // Graph
         const graphCenterX = svgWidth/2;
         const graphGroup = svg.append('g')
-            .attr('width', 600)
-            .attr('height', 400);
+              .attr('width', 600)
+              .attr('height', 400);
         const graphBackgroundRect = graphGroup.append('rect');
         [graphGroup, graphBackgroundRect].forEach(
             d3Handle => d3Handle
