@@ -122,7 +122,7 @@
         });
         return accordionContainer;
     };
-
+    
     /*********************/
     /* Result Accordions */
     /*********************/
@@ -358,7 +358,7 @@
     /******************/
     
     const appendGraph = (containingGroup, linkData, nodeData, nodeIdToNeighborNodeIds, nodeIdToNode) => {
-
+        
         const edgeGroup = containingGroup
               .append('g')
               .classed('graph-edge-group', true);
@@ -393,7 +393,6 @@
         const simulation = d3.forceSimulation()
 	      .alphaDecay(alphaDecay)
 	      .velocityDecay(velocityDecay);
-        
 	simulation
             .force('center', d3.forceCenter( parseFloat(containingGroup.attr('x')) , parseFloat(containingGroup.attr('y')) + parseFloat(containingGroup.attr('height')) / 2 ))
             .force('collide', d3.forceCollide(paddingBetweenNodes).strength(0.25).iterations(200))
@@ -593,6 +592,51 @@
             currentWindowWidth = window.innerWidth;
             renderNeuralClassifierArchitecture();
         }
+    });
+    
+    /*******************************/
+    /* Example Graph Visualization */
+    /*******************************/
+
+    d3.json('./mutag_data.json').then(mutagData => {
+        const svgContainer = document.querySelector('#data-set-example-container');
+        const svg = d3.select(svgContainer.querySelector('svg'))
+            .attr('width', 600)
+            .attr('height', 400);
+        const svgBoundingBox = svg.node().getBBox();
+        const graphContainer = svg.append('g');
+        graphContainer
+            .attr('x', 300)
+            .attr('y', 0)
+            .attr('width', 600)
+            .attr('height', 400);
+        const exampleId = randomChoice(Object.keys(mutagData));
+        document.querySelector('#mutag-example-graph-id').innerHTML = exampleId.toString();
+        const exampleGraph = mutagData[exampleId].graph;
+        const linkData = exampleGraph.links.reduce((accumulator, nodedDatum) => {
+            accumulator.push({'source': nodedDatum.source.toString(), 'target': nodedDatum.target.toString()});
+            return accumulator;
+        }, []);
+        const nodeData = exampleGraph.nodes.reduce((accumulator, nodedDatum) => {
+            accumulator.push({'id': nodedDatum.id.toString(), x: Math.random()*window.innerWidth*2, y: Math.random()*window.innerHeight*2});
+            return accumulator;
+        }, []);
+        const nodeIdToNeighborNodeIds = linkData.reduce((accumulator, linkDatum) => {
+            if (!accumulator.hasOwnProperty(linkDatum.source)) {
+                accumulator[linkDatum.source] = [];
+            }
+            if (!accumulator.hasOwnProperty(linkDatum.target)) {
+                accumulator[linkDatum.target] = [];
+            }
+            accumulator[linkDatum.source].push(linkDatum.target.toString());
+            accumulator[linkDatum.target].push(linkDatum.source.toString());
+            return accumulator;
+        }, {});
+        const nodeIdToNode = nodeData.reduce((accumulator, nodeDatum) => {
+            accumulator[nodeDatum.id] = nodeDatum;
+            return accumulator;
+        }, {});
+        appendGraph(graphContainer, linkData, nodeData, nodeIdToNeighborNodeIds, nodeIdToNode);
     });
 
 }

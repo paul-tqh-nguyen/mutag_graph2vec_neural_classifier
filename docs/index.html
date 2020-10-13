@@ -19,12 +19,15 @@
 	<p>This effort was motivated by a desire to verify the validity of the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a>. Rather than directly reproducing the results by using an SVM classifier, we chose to use a feedforward neural network.</p>
 	<p>We use the MUTAG dataset. It can be found <a target="_blank" href="https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets">here</a>.</p>
 	<p>We were able to achieve similar results and give an explanation of this in our <a href="#experiment-results">result summary</a> found later in this article.</p>
+	<p>The source code for our experiments can be found <a target="_blank" href="https://github.com/paul-tqh-nguyen/mutag_graph2vec_neural_classifier">here</a>.</p>
       </div>
     </section>
     <section id="experiment-overview" class="stone-background">
       <div class="horizontal-padding vertical-padding">
 	<h3>Experiment Overview</h3>
-	<p>The MUTAG dataset contains 188 chemical compounds that are labelled according to their mutagenic effect on a bacterium. </p>
+	<p>The MUTAG dataset contains 188 chemical compounds that are labelled according to their mutagenic effect on a bacterium. The dataset represents each chemical compound as a graph where nodes are atoms and edges are chemical bonds.</p>
+	<p>Here's example #<span id="mutag-example-graph-id"></span> from the dataset:</p>
+	<div id="data-set-example-container" class="container-center"><svg></svg></div>
 	<p>The <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a> split the data to use 90% for training and 10% for testing. We similarly used 10% for testing, 10% for validation, and 80% for training.</p>
 	<p>Here's a depiction of our model.</p>
 	<div class="architecture-depiction-container container-center">

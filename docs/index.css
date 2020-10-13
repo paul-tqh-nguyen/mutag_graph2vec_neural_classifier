@@ -337,28 +337,17 @@ div.architecture-depiction-container {
 /* Misc. D3 Visualizations */
 /***************************/
 
-#bar-chart {
-    height: 80vh;
-    width: 80vw;
-}
-
-#bar-chart-svg {
-}
-
-#scatter-plot {
-    height: 80vh;
-    width: 80vw;
-}
-
-#scatter-plot-svg {
-}
-
-#line-graph {
-    height: 80vh;
-    width: 80vw;
-}
-
-#line-graph-svg {
+#data-set-example-container {
+    width: 600px;
+    height: 400px;
+    display: fixed;
+    text-align: center;
+    padding: 10px;
+    font-family: sans-serif;
+    background: white;
+    margin-bottom: 100px;
+    border: 1px solid #000;
+    border-radius: 8px;
 }
 
 /**********/
