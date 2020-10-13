@@ -203,45 +203,6 @@ def trace(func: Callable) -> Callable:
         return result
     return decorating_function
 
-BOGUS_TOKEN = object()
-import types
-def dpn(expression_string: str, given_frame=Optional[types.FrameType]):
-    """dpn == debug print name"""
-    import os
-    import sys
-    import inspect
-    try:
-        frame = inspect.currentframe() if given_frame is None else given_frame
-        prev_frame = frame.f_back
-        macro_caller_locals = prev_frame.f_locals
-        macro_caller_globals = prev_frame.f_globals
-        new_var_name = f'paul_dpf_hack_{id(expression_string)}'
-        new_globals = dict(macro_caller_globals)
-        new_globals.update({new_var_name: BOGUS_TOKEN})
-        sys.stdout = open(os.devnull, 'w')
-        exec(f'{new_var_name} = {expression_string}', macro_caller_locals, new_globals)
-        sys.stdout = sys.__stdout__
-        var_value = new_globals[new_var_name]
-        if id(var_value) == id(BOGUS_TOKEN):
-            raise NameError(f"Cannot determine value of {expression_string}")
-        print(f'{expression_string}: {repr(var_value)}')
-    finally:
-        del frame
-    return var_value
-
-class __dpf_hack_by_paul__():
-    def __init__(self):
-        pass
-    
-    def __getattr__(self, var_name):
-        import inspect
-        frame = inspect.currentframe()
-        return dpn(var_name, frame)
-
-dpf = __dpf_hack_by_paul__() # usage is like a='a' ; dpf.a
-
-# @todo make apropos methods
-
 # Timing Utilities
 
 from typing import Callable, Generator

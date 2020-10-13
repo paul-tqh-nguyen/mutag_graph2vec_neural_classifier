@@ -36,8 +36,6 @@ from mutag_classifier import MUTAGClassifier
 # Globals #
 ###########
 
-# Data Files
-
 EDGES_FILE = './data/MUTAG_A.txt'
 EDGE_LABELS_FILE = './data/MUTAG_edge_labels.txt'
 NODE_LABELS_FILE = './data/MUTAG_node_labels.txt'
