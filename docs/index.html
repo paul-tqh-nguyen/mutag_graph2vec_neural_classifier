@@ -15,7 +15,7 @@
     <section id="introduction">
       <div class="horizontal-padding vertical-padding">
 	<h3>Introduction</h3>
-	<p>This article goes over our findings for classifying chemical compounds based on their mutagenic affect on a particular bacterium.</p>
+	<p>This article goes over our findings for classifying chemical compounds based on their mutagenic effect on a particular bacterium.</p>
 	<p>This effort was motivated by a desire to verify the validity of the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a>. Rather than directly reproducing the results by using an SVM classifier, we chose to use a feedforward neural network.</p>
 	<p>We use the MUTAG dataset. It can be found <a target="_blank" href="https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets">here</a>.</p>
 	<p>We were able to achieve similar results and give an explanation of this in our <a href="#experiment-results">result summary</a> found later in this article.</p>
@@ -73,8 +73,8 @@
     <section id="conclusion" class="stone-background">
       <div class="horizontal-padding vertical-padding">
 	<h3>Conclusion</h3>
-	<p>It seems that we were able to reproduce the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a> with both a feed-forward neural network architecture and logistic rergession models (without tuning the classification threshold, which we hard-codedd at 0.5).</p>
-	<p>Thought their results on the MUTAG dataset were reproduced here, it's noteworthy that, as stated in the paper, <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a> was not aimed at solving such small datasets. There might be better methods aimed at handling small datasets that more robustly handle problems that come up when dealing with small datasets, e.g. picking a sufficiently large and representative validation or test set.</p>
+	<p>It seems that we were able to reproduce the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a> with both a feed-forward neural network architecture and logistic regression models (without tuning the classification threshold, which we hard-coded at 0.5).</p>
+	<p>Though their results on the MUTAG dataset were reproduced here, it's noteworthy that, as stated in the paper, <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a> was not aimed at solving such small datasets. There might be better methods aimed at handling small datasets that more robustly handle problems that come up when dealing with small datasets, e.g. picking a sufficiently large and representative validation or test set.</p>
       </div>
       <table style="table-layout: fixed; width: 100%; padding-top: 40px; padding-bottom: 40px;">
 	<tr>
