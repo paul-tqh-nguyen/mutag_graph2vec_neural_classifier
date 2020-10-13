@@ -129,7 +129,8 @@
     
     const numberOfResultsToShow = 20;
     
-    d3.json('./hyperparameter_search_results.json').then(resultSummaryDicts => { // All Results
+    d3.json('./hyperparameter_search_results.json').then(resultSummaryDictsWithoutIds => { // All Results
+        const resultSummaryDicts = resultSummaryDictsWithoutIds.map((resultSummaryDict, i) => Object.assign(resultSummaryDict, {trial_id: i}));
         document.querySelector('#total-number-of-hyperparameter-search-trials-span').innerHTML = resultSummaryDicts.length.toString();
         const maxValidationAccuracy = Math.max(...resultSummaryDicts.map(resultSummaryDict => resultSummaryDict.validation_accuracy));
         const resultDictsWithMaxValidationAccuracy = resultSummaryDicts.filter(resultSummaryDict => resultSummaryDict.validation_accuracy ===  maxValidationAccuracy);
@@ -139,11 +140,11 @@
             (accumulator, resultDict) => ((resultDict.testing_accuracy < accumulator) ? resultDict.testing_accuracy : accumulator)
             , 2);
         document.querySelector('#worst-testing-accuracy-with-max-validation-accuracy-percent-span').innerHTML = // @todo it would be nice to not hard-code this 19
-            `${(100*worstTestingAccuracyWithMaxValidationAccuracy).toFixed(2)}% (${worstTestingAccuracyWithMaxValidationAccuracy*19}/19 correct)`; 
+            `${(100*worstTestingAccuracyWithMaxValidationAccuracy).toFixed(2)}% (${worstTestingAccuracyWithMaxValidationAccuracy*19}/19 correct)`;
         
-        const generateLabelGeneratorDestructorTriple = (resultSummaryDict, i) => {
+        const generateLabelGeneratorDestructorTriple = (resultSummaryDict, rankingCriterionString, i) => {
             
-            const labelInnerHTML = `${numberToOrdinal(i+1)} Place Best Validation Accuracy Model`;
+            const labelInnerHTML = `${numberToOrdinal(i+1)} Place Best ${rankingCriterionString} Model (Trial #${resultSummaryDict.trial_id})`;
             
             const contentGenerator = contentContainer => {
                 contentContainer.append(createNewElement('p', {innerHTML: 'Results:', classes: ['result-table-title']}));
@@ -163,6 +164,10 @@
                     [
                         createNewElement('p', {innerHTML: 'Total Dataset Accuracy'}),
                         createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${(100*resultSummaryDict.total_accuracy).toFixed(2)}%, ${resultSummaryDict.total_accuracy*188}/188`})
+                    ],
+                    [
+                        createNewElement('p', {innerHTML: 'Validation Loss'}),
+                        createNewElement('p', {attributes: {style: 'float: right;'}, innerHTML: `${resultSummaryDict.best_validation_loss}`})
                     ],
                 ], {classes: ['result-table', 'container-center'], attributes: {style: 'margin-bottom: 1em;'}}));
                 
@@ -191,7 +196,7 @@
             return [labelInnerHTML, contentGenerator, contentDestructor];
         };
         
-        const validationLabelGeneratorDestructorTriples = resultSummaryDicts
+        const validationAccuracyLabelGeneratorDestructorTriples = resultSummaryDicts
               .sort((resultSummaryDict1, resultSummaryDict2) => {
                   let result = resultSummaryDict2.validation_accuracy-resultSummaryDict1.validation_accuracy;
                   if (result === 0) {
@@ -200,11 +205,20 @@
                   return result;
               })
               .slice(0, numberOfResultsToShow)
-              .map(generateLabelGeneratorDestructorTriple);
-        const allResultsByValidationDiv = document.querySelector('#all-results-by-validation');
-        const validationAccordion = createLazyAccordion(validationLabelGeneratorDestructorTriples);
-        validationAccordion.classList.add('container-center');
-        allResultsByValidationDiv.append(validationAccordion);        
+              .map((resultSummaryDict, i) => generateLabelGeneratorDestructorTriple(resultSummaryDict, 'Validation Accuracy', i));
+        const allResultsByValidationAccuracyDiv = document.querySelector('#all-results-by-validation-accuracy');
+        const validationaccuracyAccordion = createLazyAccordion(validationAccuracyLabelGeneratorDestructorTriples);
+        validationaccuracyAccordion.classList.add('container-center');
+        allResultsByValidationAccuracyDiv.append(validationaccuracyAccordion);
+
+        const validationLossLabelGeneratorDestructorTriples = resultSummaryDicts
+              .sort((resultSummaryDict1, resultSummaryDict2) => resultSummaryDict1.best_validation_loss-resultSummaryDict2.best_validation_loss)
+              .slice(0, numberOfResultsToShow)
+              .map((resultSummaryDict, i) => generateLabelGeneratorDestructorTriple(resultSummaryDict, 'Validation Loss', i));
+        const allResultsByValidationLossDiv = document.querySelector('#all-results-by-validation-loss');
+        const validationLossAccordion = createLazyAccordion(validationLossLabelGeneratorDestructorTriples);
+        validationLossAccordion.classList.add('container-center');
+        allResultsByValidationLossDiv.append(validationLossAccordion);
     });
 
     /***************************/
@@ -368,10 +382,8 @@
         const alphaDecay = 0.0075;
         const velocityDecay = 0.8;
         const paddingBetweenNodes = 25;
-        let linkForceAlpha = 0.1;
         const drag = d3.drag();
         drag.on('drag', (datum, i) => {
-            linkForceAlpha = 0.005;
 	    simulation
 		.alpha(0.1)
 		.restart();
@@ -386,6 +398,7 @@
             .force('center', d3.forceCenter( parseFloat(containingGroup.attr('x')) , parseFloat(containingGroup.attr('y')) + parseFloat(containingGroup.attr('height')) / 2 ))
             .force('collide', d3.forceCollide(paddingBetweenNodes).strength(0.25).iterations(200))
             .force('links', () => {
+                const linkForceAlpha = (nodeData.length / linkData.length) * 0.5 * simulation.alpha() + (1 - simulation.alpha()) * 0.0005;
 	        nodeData.forEach(node => {
                     const neighborIds = nodeIdToNeighborNodeIds[node.id];
                     const neighbors = [...neighborIds].map(id => nodeIdToNode[id]);

@@ -54,19 +54,24 @@
     <section id="experiment-results">
       <div class="horizontal-padding vertical-padding">
 	<h3>Experiment Results</h3>
-	<p>We're using the same percent of the dataset for testing as done in the <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a>. Whether or not this small test set size was problematic (e.g. might lead to overfitting, especially given the small size of the dataset as a whole) was not <em>intetionally</em> explored as our goal was to merely produce similar results to the paper.</p>
+	<p>We're using the same percent of the dataset for testing as done in the <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a>. Whether or not this small test set size was problematic (e.g. might lead to overfitting, especially given the small size of the dataset as a whole) was not explored as our goal was to merely produce similar results to the paper.</p>
 	<p>We ran <span id="total-number-of-hyperparameter-search-trials-span"></span> trials of hyperparameter search.</p>
 	<p>Here are our best overall results by validation accuracy:</p>
-	<div id="all-results-by-validation" class="result-table-container"></div>
+	<div id="all-results-by-validation-accuracy" class="result-table-container"></div>
+	<p>Here are our best overall results by validation loss:</p>
+	<div id="all-results-by-validation-loss" class="result-table-container"></div>
 	<p>Note that some of the models above have zero dense layers, i.e. they are logistic regression models.</p>
 	<p>The <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec paper</a> reported 83.15% accuracy (with a standard deviation of 9.25%) on the MUTAG dataset. Given that we were able to achieve 89.47% test accuracy, it seems that the results from the graph2vec paper on the MUTAG dataset are reproducible with feed-forward neural network and logistic regression classifiers in addition to the SVM classifier used in the paper.</p>
-	<p>However, one flaw in our experiment was that our validation set was the same small size as the test set. We had <span id="total-number-of-models-with-max-validation-accuracy"></span> models achieve a validation accuracy of <span id="max-validation-accuracy-percent-span"></span>. However, some of them had testing scores as low as <span id="worst-testing-accuracy-with-max-validation-accuracy-percent-span"></span>. Thus, the validation accuracy wasn't a great indicator of whether or not the model was sufficiently accurate.</p>
+	<p>One flaw in our experiment was that our validation set was the same small size as the test set. We had <span id="total-number-of-models-with-max-validation-accuracy"></span> models achieve a validation accuracy of <span id="max-validation-accuracy-percent-span"></span>. However, some of them had testing scores as low as <span id="worst-testing-accuracy-with-max-validation-accuracy-percent-span"></span>. Thus, the validation accuracy wasn't a great indicator of whether or not the model was sufficiently accurate.</p>
+	<p>Validation loss served as a better metric as the models with the best validation losses tended to have better test losses. However, there's still a large amount of variance in the testing and validation accuracies of the models with the best validation losses, so validation loss isn't an ideal metric either.</p>
+	<p>If we split the data such that the validation dataset was larger, then it's possible that there'd be less variance in testing loss among the models with the best validation accuracies and among the models with the best validation losses since the validation set would be more representative and would help prevent overfitting (and would yield better testing results). This is something we'd keep in mind in the future if we were to conduct a similar experiment again.</p>
       </div>
     </section>
     <section id="conclusion" class="stone-background">
       <div class="horizontal-padding vertical-padding">
 	<h3>Conclusion</h3>
-	<p>dummy dummy</p>
+	<p>It seems that we were able to reproduce the results from <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a> with both a feed-forward neural network architecture and logistic rergession models (without tuning the classification threshold, which we hard-codedd at 0.5).</p>
+	<p>Thought their results on the MUTAG dataset were reproduced here, it's noteworthy that, as stated in the paper, <a target="_blank" href="https://arxiv.org/abs/1707.05005">graph2vec</a> was not aimed at solving such small datasets. There might be better methods aimed at handling small datasets that more robustly handle problems that come up when dealing with small datasets, e.g. picking a sufficiently large and representative validation or test set.</p>
       </div>
       <table style="table-layout: fixed; width: 100%; padding-top: 40px; padding-bottom: 40px;">
 	<tr>
