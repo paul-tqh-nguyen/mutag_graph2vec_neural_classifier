@@ -4,18 +4,6 @@
 from typing import Generator
 from contextlib import contextmanager
 @contextmanager
-def safe_cuda_memory() -> Generator:
-    try:
-        yield
-    except RuntimeError as err:
-        if not any(cuda_err_substring in str(err) for cuda_err_substring in {'CUDA error: out of memory', 'CUDA out of memory'}):
-            raise
-        else:
-            print("CUDA ran out of memory.")
-
-from typing import Generator
-from contextlib import contextmanager
-@contextmanager
 def warnings_suppressed() -> Generator:
     import warnings
     with warnings.catch_warnings():
